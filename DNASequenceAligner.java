@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class DNASequenceAligner {
@@ -20,6 +21,14 @@ public class DNASequenceAligner {
 
         int score = alignSequences(seq1, seq2);
         System.out.println("Alignment score: " + score);
+
+        // Get and print aligned sequences using ArrayList!
+        ArrayList<String> aligned = getAlignedSequences(seq1, seq2, getScoreMatrix(seq1, seq2));
+        System.out.println("\nAligned sequences:");
+        for (int k = 0; k < aligned.size(); k++) {
+            System.out.println(aligned.get(k));
+        }
+
         scanner.close();
     }
 
@@ -53,21 +62,21 @@ public class DNASequenceAligner {
 
         return scoreMatrix[m][n]; // Just return score for now
     }
+
 }
 
-// Traceback to get actual aligned sequences - like finding the best path in a
-// game!
-private static ArrayList<String> getAlignedSequences(String seq1, String seq2, int[][] scoreMatrix) {
-    ArrayList<String> aligned = new ArrayList<>(); // Using ArrayList from Collections!
-    StringBuilder align1 = new StringBuilder();
-    StringBuilder align2 = new StringBuilder();
-    StringBuilder matches = new StringBuilder();
+    // Traceback to get actual aligned sequences - like finding the best path in a
+    // game!
+    private static int alignSequences(String seq1, String seq2) {
+        return getScoreMatrix(seq1, seq2)[seq1.length()][seq2.length()];
+    }
 
     int i = seq1.length();
     int j = seq2.length();
 
     // Go backwards through the matrix
-    while (i > 0 || j > 0) {
+    while(i>0||j>0)
+    {
         if (i > 0 && j > 0 &&
                 seq1.charAt(i - 1) == seq2.charAt(j - 1) &&
                 scoreMatrix[i][j] == scoreMatrix[i - 1][j - 1] + MATCH_SCORE) {
@@ -101,9 +110,32 @@ private static ArrayList<String> getAlignedSequences(String seq1, String seq2, i
     }
 
     // Reverse because we built backwards
-    aligned.add(align1.reverse().toString());
-    aligned.add(matches.reverse().toString());
-    aligned.add(align2.reverse().toString());
+    aligned.add(align1.reverse().toString());aligned.add(matches.reverse().toString());aligned.add(align2.reverse().toString());
 
     return aligned;
 }
+
+    // Helper to return the matrix (was private before)
+    private static int[][] getScoreMatrix(String seq1, String seq2) {
+        int m = seq1.length();
+        int n = seq2.length();
+        int[][] scoreMatrix = new int[m + 1][n + 1];
+
+        for (int i = 0; i <= m; i++) {
+            scoreMatrix[i][0] = i * GAP_PENALTY;
+        }
+        for (int j = 0; j <= n; j++) {
+            scoreMatrix[0][j] = j * GAP_PENALTY;
+        }
+
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                int match = scoreMatrix[i - 1][j - 1] + 
+                           (seq1.charAt(i - 1) == seq2.charAt(j - 1) ? MATCH_SCORE : MISMATCH_SCORE);
+                int delete = scoreMatrix[i - 1][j] + GAP_PENALTY;
+                int insert = scoreMatrix[i][j - 1] + GAP_PENALTY;
+                scoreMatrix[i][j] = Math.max(match, Math.max(delete, insert));
+            }
+        }
+        return scoreMatrix;
+    }
