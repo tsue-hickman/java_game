@@ -54,3 +54,56 @@ public class DNASequenceAligner {
         return scoreMatrix[m][n]; // Just return score for now
     }
 }
+
+// Traceback to get actual aligned sequences - like finding the best path in a
+// game!
+private static ArrayList<String> getAlignedSequences(String seq1, String seq2, int[][] scoreMatrix) {
+    ArrayList<String> aligned = new ArrayList<>(); // Using ArrayList from Collections!
+    StringBuilder align1 = new StringBuilder();
+    StringBuilder align2 = new StringBuilder();
+    StringBuilder matches = new StringBuilder();
+
+    int i = seq1.length();
+    int j = seq2.length();
+
+    // Go backwards through the matrix
+    while (i > 0 || j > 0) {
+        if (i > 0 && j > 0 &&
+                seq1.charAt(i - 1) == seq2.charAt(j - 1) &&
+                scoreMatrix[i][j] == scoreMatrix[i - 1][j - 1] + MATCH_SCORE) {
+            // Match!
+            align1.append(seq1.charAt(i - 1));
+            align2.append(seq2.charAt(j - 1));
+            matches.append('|');
+            i--;
+            j--;
+        } else if (i > 0 && j > 0 &&
+                scoreMatrix[i][j] == scoreMatrix[i - 1][j - 1] + MISMATCH_SCORE) {
+            // Mismatch
+            align1.append(seq1.charAt(i - 1));
+            align2.append(seq2.charAt(j - 1));
+            matches.append('X');
+            i--;
+            j--;
+        } else if (i > 0 && scoreMatrix[i][j] == scoreMatrix[i - 1][j] + GAP_PENALTY) {
+            // Delete (gap in seq2)
+            align1.append(seq1.charAt(i - 1));
+            align2.append('-');
+            matches.append(' ');
+            i--;
+        } else {
+            // Insert (gap in seq1)
+            align1.append('-');
+            align2.append(seq2.charAt(j - 1));
+            matches.append(' ');
+            j--;
+        }
+    }
+
+    // Reverse because we built backwards
+    aligned.add(align1.reverse().toString());
+    aligned.add(matches.reverse().toString());
+    aligned.add(align2.reverse().toString());
+
+    return aligned;
+}
