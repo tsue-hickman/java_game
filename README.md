@@ -4,7 +4,7 @@ As a software engineer, I'm working to master Java fundamentals and dynamic prog
 
 I wrote a program that takes two DNA sequences and aligns them using the Needleman-Wunsch algorithm - a classic bioinformatics method. It calculates a similarity score (matches = +1, mismatches = -1, gaps = -2) and shows the actual aligned sequences with visual symbols. The purpose is to practice Java's object-oriented structure while solving a real-world computational biology problem.
 
-[Software Demo Video](makingvideotoinputhere)
+[Software Demo Video](https://www.youtube.com/watch?v=8ALbKJixP1w)
 
 # Development Environment
 

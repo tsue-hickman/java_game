@@ -1,8 +1,8 @@
 DNA Sequence Alignment Results
 ================================
-Score: 2
+Score: 0
 
 Aligned Sequences:
-ATCG
-|X||
-AGCG
+ACGT
+|XX|
+AGCT
